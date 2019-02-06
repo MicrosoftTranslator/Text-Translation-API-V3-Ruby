@@ -1,39 +1,26 @@
-package main
+require 'net/https'
+require 'uri'
+require 'cgi'
+require 'json'
 
-import (    
-    "encoding/json"
-    "fmt"
-    "log"
-    "net/http"
-    "net/url"    
-)
+host = 'https://api.cognitive.microsofttranslator.com'
+path = '/languages?api-version=3.0'
 
-func main() {
-   getLanguages()
-}
+uri = URI (host + path)
 
-func getLanguages() {
-    u, _ := url.Parse("https://api.cognitive.microsofttranslator.com//languages")
-    q := u.Query()
-    q.Add("api-version", "3.0")
-    u.RawQuery = q.Encode()
-    
-    req, err := http.NewRequest("GET", u.String(), nil)
-    if err != nil {
-        log.Fatal(err)
-    }    
-    req.Header.Add("Content-Type", "application/json")
+request = Net::HTTP::Get.new(uri)
 
-    res, err := http.DefaultClient.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
+response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+    http.request (request)
+end
 
-    var result interface{}
-    if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
-      log.Fatal(err)
-    }
+result = response.body.force_encoding("utf-8")
 
-    prettyJSON, _ := json.MarshalIndent(result, "", "  ")
-    fmt.Printf("%s\n", prettyJSON)
-}
+json = JSON.pretty_generate(JSON.parse(result))
+
+output_path = 'output.txt'
+
+# Write response to file
+File.open(output_path, 'w' ) do |output|
+    output.print json
+end
