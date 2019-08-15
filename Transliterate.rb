@@ -4,20 +4,23 @@ require 'cgi'
 require 'json'
 require 'securerandom'
 
-# **********************************************
-# *** Update or verify the following values. ***
-# **********************************************
+if (!ENV["TRANSLATOR_TEXT_SUBSCRIPTION_KEY"])
+    raise "Please set/export the following environment variable: TRANSLATOR_TEXT_SUBSCRIPTION_KEY"
+else
+    subscription_key = ENV["TRANSLATOR_TEXT_SUBSCRIPTION_KEY"]
+end
+if (!ENV["TRANSLATOR_TEXT_ENDPOINT"])
+    raise "Please set/export the following environment variable: TRANSLATOR_TEXT_ENDPOINT"
+else
+    endpoint = ENV["TRANSLATOR_TEXT_ENDPOINT"]
+end
 
-# Replace the key string value with your valid subscription key.
-key = 'ENTER KEY HERE'
-
-host = 'https://api.cognitive.microsofttranslator.com'
 path = '/transliterate?api-version=3.0'
 
 # Transliterate text in Japanese from Japanese script (i.e. Hiragana/Katakana/Kanji) to Latin script.
 params = "&language=ja&fromScript=jpan&toScript=latn";
 
-uri = URI (host + path + params)
+uri = URI (endpoint + path + params)
 
 # Transliterate "good afternoon".
 text = 'こんにちは'
@@ -27,7 +30,7 @@ content = '[{"Text" : "' + text + '"}]'
 request = Net::HTTP::Post.new(uri)
 request['Content-type'] = 'application/json'
 request['Content-length'] = content.length
-request['Ocp-Apim-Subscription-Key'] = key
+request['Ocp-Apim-Subscription-Key'] = subscription_key
 request['X-ClientTraceId'] = SecureRandom.uuid
 request.body = content
 
