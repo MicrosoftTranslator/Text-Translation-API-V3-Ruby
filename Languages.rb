@@ -3,10 +3,15 @@ require 'uri'
 require 'cgi'
 require 'json'
 
-host = 'https://api.cognitive.microsofttranslator.com'
+if (!ENV["TRANSLATOR_TEXT_ENDPOINT"])
+    raise "Please set/export the following environment variable: TRANSLATOR_TEXT_ENDPOINT"
+else
+    endpoint = ENV["TRANSLATOR_TEXT_ENDPOINT"]
+end
+
 path = '/languages?api-version=3.0'
 
-uri = URI (host + path)
+uri = URI (endpoint + path)
 
 request = Net::HTTP::Get.new(uri)
 
