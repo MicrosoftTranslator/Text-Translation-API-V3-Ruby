@@ -21,7 +21,7 @@ end
 
 result = response.body.force_encoding("utf-8")
 
-json = JSON.pretty_generate(JSON.parse(result))
+hash = JSON.parse(result)
 
 output_path = 'output.txt'
 

@@ -39,5 +39,5 @@ end
 
 result = response.body.force_encoding("utf-8")
 
-json = JSON.pretty_generate(JSON.parse(result))
-puts json
+hash = JSON.parse(result)
+puts JSON.pretty_generate(hash)
